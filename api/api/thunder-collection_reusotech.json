@@ -1,0 +1,209 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "ReusoTech Circular API",
+  "collectionId": "reusotech-circular-collection",
+  "dateExported": "2026-09-03",
+  "version": "1.1",
+  "folders": [
+    {
+      "_id": "folder_auth",
+      "name": "1. Autenticación (Auth)",
+      "containerId": "",
+      "created": "2026-09-03"
+    },
+    {
+      "_id": "folder_equipos",
+      "name": "2. Gestión de Equipos y Pasaporte",
+      "containerId": "",
+      "created": "2026-09-03"
+    },
+    {
+      "_id": "folder_reportes",
+      "name": "3. Reportes y Métricas",
+      "containerId": "",
+      "created": "2026-09-03"
+    }
+  ],
+  "requests": [
+    {
+      "_id": "req_login_recepcion",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_auth",
+      "name": "1.1 Login - Recepción",
+      "url": "http://localhost:8080/api/auth/login",
+      "method": "POST",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"username\": \"recepcion\",\n  \"password\": \"recepcion123\"\n}"
+      }
+    },
+    {
+      "_id": "req_login_tecnico",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_auth",
+      "name": "1.2 Login - Técnico",
+      "url": "http://localhost:8080/api/auth/login",
+      "method": "POST",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"username\": \"tecnico\",\n  \"password\": \"tecnico123\"\n}"
+      }
+    },
+    {
+      "_id": "req_login_auditor",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_auth",
+      "name": "1.3 Login - Auditor",
+      "url": "http://localhost:8080/api/auth/login",
+      "method": "POST",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"username\": \"auditor\",\n  \"password\": \"auditor123\"\n}"
+      }
+    },
+    {
+      "_id": "req_register_user",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_auth",
+      "name": "1.4 Registrar Nuevo Usuario",
+      "url": "http://localhost:8080/api/auth/register",
+      "method": "POST",
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"username\": \"tecnico_juan\",\n  \"password\": \"segura123\",\n  \"nombreCompleto\": \"Juan Pérez\",\n  \"email\": \"juan.perez@reusotech.com\",\n  \"rol\": \"TECNICO\"\n}"
+      }
+    },
+    {
+      "_id": "req_post_equipo",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_equipos",
+      "name": "2.1 Registrar Equipo (Recepción / Supervisor)",
+      "url": "http://localhost:8080/api/equipos",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"serial\": \"SN-DELL-LATITUDE-5420-001\",\n  \"tipo\": \"Laptop\",\n  \"caracteristicas\": \"Intel Core i5 11va Gen, 16GB RAM, SSD 512GB NVMe\",\n  \"estadoInicial\": \"RECEPCIONADO\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_equipos",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_equipos",
+      "name": "2.2 Listar Todos los Equipos",
+      "url": "http://localhost:8080/api/equipos",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_equipo_id",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_equipos",
+      "name": "2.3 Obtener Equipo por ID",
+      "url": "http://localhost:8080/api/equipos/1",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ]
+    },
+    {
+      "_id": "req_patch_diagnostico",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_equipos",
+      "name": "2.4 Cambiar Estado a Diagnóstico (Técnico)",
+      "url": "http://localhost:8080/api/equipos/1/estado",
+      "method": "PATCH",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"nuevoEstado\": \"EN_DIAGNOSTICO\",\n  \"motivo\": \"Inicio de diagnóstico técnico de hardware, batería y almacenamiento\"\n}"
+      }
+    },
+    {
+      "_id": "req_patch_reparacion",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_equipos",
+      "name": "2.5 Cambiar Estado a Reparación (Técnico)",
+      "url": "http://localhost:8080/api/equipos/1/estado",
+      "method": "PATCH",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"nuevoEstado\": \"EN_REPARACION\",\n  \"motivo\": \"Mantenimiento térmico, cambio de pasta disipadora y reinstalación de SO\"\n}"
+      }
+    },
+    {
+      "_id": "req_patch_cierre",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_equipos",
+      "name": "2.6 Cierre de Ciclo a Reutilizado con Destino y Evidencia (Técnico)",
+      "url": "http://localhost:8080/api/equipos/1/estado",
+      "method": "PATCH",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"nuevoEstado\": \"REUTILIZADO\",\n  \"motivo\": \"Equipo 100% operativo entregado en calidad de donación\",\n  \"destinoFinal\": \"Colegio Nacional San Martín de Porres - Aula de Cómputo\",\n  \"evidenciaDestino\": \"https://storage.reusotech.com/actas/acta-entrega-donacion-2026-001.pdf\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_pasaporte",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_equipos",
+      "name": "2.7 Obtener Pasaporte Digital (Historial Completo)",
+      "url": "http://localhost:8080/api/equipos/1/pasaporte",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_reporte_circularidad",
+      "colId": "reusotech-circular-collection",
+      "containerId": "folder_reportes",
+      "name": "3.1 Consultar Reporte de Circularidad (Supervisor / Auditor)",
+      "url": "http://localhost:8080/api/reportes/circularidad",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ]
+    }
+  ]
+}
