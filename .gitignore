@@ -1,0 +1,38 @@
+# Maven / Java
+target/
+**/target/
+*.class
+
+# Directorio generado que contiene una copia/salida del proyecto
+api/bin/
+
+# Dependencias y artefactos locales
+.mvn/wrapper/maven-wrapper.jar
+**/.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+**/.vscode/
+.classpath
+.project
+.settings/
+
+# Sistemas operativos
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs y archivos temporales
+*.log
+*.tmp
+*.swp
+
+# Configuración local y secretos
+.env
+.env.*
+!.env.example
+
