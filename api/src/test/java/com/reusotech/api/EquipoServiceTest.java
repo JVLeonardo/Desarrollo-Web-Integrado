@@ -56,7 +56,8 @@ class EquipoServiceTest {
 
     @BeforeEach
     void setUp() {
-        usuarioRecepcion = new Usuario(1L, "recepcion", "pass", "Operador Recepcion", "rec@reuso.com", RolEnum.RECEPCION, true);
+        usuarioRecepcion = new Usuario(1L, "recepcion", "pass", "Operador Recepcion", "rec@reuso.com",
+                RolEnum.RECEPCION, true);
         usuarioTecnico = new Usuario(2L, "tecnico", "pass", "Tecnico Experto", "tec@reuso.com", RolEnum.TECNICO, true);
         usuarioAuditor = new Usuario(3L, "auditor", "pass", "Auditor Calidad", "aud@reuso.com", RolEnum.AUDITOR, true);
 
@@ -68,7 +69,8 @@ class EquipoServiceTest {
     @DisplayName("TDD Regla 1: Registrar equipo con serial nuevo debe ser exitoso y crear historial inicial")
     void testRegistrarEquipoExitoso() {
         // Arrange
-        EquipoRequestDTO request = new EquipoRequestDTO("SN-LAPTOP-2026", "Laptop", "Core i5 16GB RAM", EstadoEquipoEnum.RECEPCIONADO);
+        EquipoRequestDTO request = new EquipoRequestDTO("SN-LAPTOP-2026", "Laptop", "Core i5 16GB RAM",
+                EstadoEquipoEnum.RECEPCIONADO);
         when(equipoRepository.existsBySerialIgnoreCase("SN-LAPTOP-2026")).thenReturn(false);
         when(usuarioRepository.findByUsername("recepcion")).thenReturn(Optional.of(usuarioRecepcion));
         when(equipoRepository.save(any(Equipo.class))).thenAnswer(invocation -> {
@@ -91,7 +93,8 @@ class EquipoServiceTest {
     @DisplayName("TDD Regla 2: Intentar registrar serial duplicado debe lanzar DuplicateSerialException")
     void testRegistrarEquipoSerialDuplicadoFalla() {
         // Arrange
-        EquipoRequestDTO request = new EquipoRequestDTO("SN-LAPTOP-2026", "Laptop", "Core i5", EstadoEquipoEnum.RECEPCIONADO);
+        EquipoRequestDTO request = new EquipoRequestDTO("SN-LAPTOP-2026", "Laptop", "Core i5",
+                EstadoEquipoEnum.RECEPCIONADO);
         when(equipoRepository.existsBySerialIgnoreCase("SN-LAPTOP-2026")).thenReturn(true);
 
         // Act & Assert
@@ -129,8 +132,7 @@ class EquipoServiceTest {
                 EstadoEquipoEnum.REUTILIZADO,
                 "Donación a escuela técnica comunitaria",
                 "I.E. República de Perú",
-                "https://storage.reusotech.com/actas/acta-2026-001.pdf"
-        );
+                "https://storage.reusotech.com/actas/acta-2026-001.pdf");
         when(usuarioRepository.findByUsername("tecnico")).thenReturn(Optional.of(usuarioTecnico));
         when(equipoRepository.findById(10L)).thenReturn(Optional.of(equipoLaptop));
         when(equipoRepository.save(any(Equipo.class))).thenAnswer(i -> i.getArgument(0));
@@ -168,7 +170,8 @@ class EquipoServiceTest {
     @DisplayName("TDD Regla 6: Obtener Pasaporte Digital debe retornar equipo con todo su historial cronológico")
     void testObtenerPasaporteDigital() {
         // Arrange
-        Historial h1 = new Historial(equipoLaptop, usuarioRecepcion, null, EstadoEquipoEnum.RECEPCIONADO, "Recepción inicial");
+        Historial h1 = new Historial(equipoLaptop, usuarioRecepcion, null, EstadoEquipoEnum.RECEPCIONADO,
+                "Recepción inicial");
         h1.setId(1L);
         when(equipoRepository.findById(10L)).thenReturn(Optional.of(equipoLaptop));
         when(historialRepository.findByEquipoIdWithUsuarioOrdered(10L)).thenReturn(List.of(h1));

@@ -14,4 +14,6 @@ public interface EquipoService {
     EquipoResponseDTO obtenerPorId(Long id);
     EquipoResponseDTO obtenerPorSerial(String serial);
     List<EquipoResponseDTO> listarTodos();
+    EquipoResponseDTO actualizarEquipo(Long id, EquipoRequestDTO requestDTO, String usernameResponsable);
+    void desactivarEquipo(Long id, String usernameResponsable);
 }

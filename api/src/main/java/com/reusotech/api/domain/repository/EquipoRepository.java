@@ -20,6 +20,9 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
 
     long countByEstadoActual(EstadoEquipoEnum estadoActual);
 
+    @Query("SELECT e.estadoActual, COUNT(e) FROM Equipo e GROUP BY e.estadoActual")
+    List<Object[]> countEquiposAgrupadosPorEstado();
+
     @Query("SELECT COUNT(e) FROM Equipo e WHERE e.estadoActual IN ('REUTILIZADO', 'RECICLADO', 'DESMANTELADO', 'DISPOSICION_FINAL')")
     long countEquiposCerrados();
 
@@ -28,4 +31,10 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
 
     @Query("SELECT COUNT(e) FROM Equipo e WHERE e.estadoActual IN ('REUTILIZADO', 'REPARADO')")
     long countEquiposReutilizadosOReparados();
+
+    @Query("SELECT COUNT(e) FROM Equipo e WHERE TRIM(e.serial) = '' OR TRIM(e.tipo) = ''")
+    long countRegistrosIncompletos();
+
+    @Query("SELECT COUNT(e) FROM Equipo e GROUP BY LOWER(e.serial) HAVING COUNT(e) > 1")
+    List<Long> countSerialesRepetidos();
 }

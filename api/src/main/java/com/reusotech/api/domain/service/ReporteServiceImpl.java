@@ -44,9 +44,17 @@ public class ReporteServiceImpl implements ReporteService {
             indiceCircularidad = Math.round(((double) (reutilizados + reparados) / totalRecibidos) * 10000.0) / 100.0;
         }
 
-        // 2. Tasa de exactitud de registros (Con la regla de unicidad e integridad garantizada por el sistema: 100%)
+        // 2. Exactitud de registros = (registros con serial y tipo completos / total) * 100
+        //    Duplicidad = (registros con serial repetido en exceso / total) * 100
         double tasaExactitud = 100.0;
         double tasaDuplicidad = 0.0;
+        if (totalRecibidos > 0) {
+            long incompletos = equipoRepository.countRegistrosIncompletos();
+            long duplicados = equipoRepository.countSerialesRepetidos().stream()
+                    .mapToLong(c -> c - 1).sum();
+            tasaExactitud = Math.round(((double) (totalRecibidos - incompletos) / totalRecibidos) * 10000.0) / 100.0;
+            tasaDuplicidad = Math.round(((double) duplicados / totalRecibidos) * 10000.0) / 100.0;
+        }
 
         // 3. Completitud de Trazabilidad = (Equipos cerrados con destino y evidencia / Total equipos cerrados) * 100
         double completitudTrazabilidad = 100.0;

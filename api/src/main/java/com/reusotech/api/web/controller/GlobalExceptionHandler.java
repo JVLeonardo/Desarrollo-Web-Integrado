@@ -85,6 +85,7 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         body.put("status", status.value());
         body.put("error", error);
+        body.put("mensaje", error);
         body.put("message", message);
         body.put("path", path);
         return ResponseEntity.status(status).body(body);

@@ -81,6 +81,7 @@ public class EquipoServiceImpl implements EquipoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public EquipoResponseDTO cambiarEstado(Long id, CambioEstadoRequestDTO requestDTO, String usernameResponsable) {
         Usuario usuario = obtenerUsuarioPorUsername(usernameResponsable);
         
@@ -175,8 +176,50 @@ public class EquipoServiceImpl implements EquipoService {
     @Transactional(readOnly = true)
     public List<EquipoResponseDTO> listarTodos() {
         return equipoRepository.findAll().stream()
+                .filter(e -> !Boolean.FALSE.equals(e.getActivo()))
                 .map(EquipoResponseDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public EquipoResponseDTO actualizarEquipo(Long id, EquipoRequestDTO requestDTO, String usernameResponsable) {
+        Usuario usuario = obtenerUsuarioPorUsername(usernameResponsable);
+        validarNoAuditor(usuario);
+
+        Equipo equipo = equipoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con ID: " + id));
+
+        String serialLimpio = requestDTO.getSerial().trim();
+        if (!equipo.getSerial().equalsIgnoreCase(serialLimpio)
+                && equipoRepository.existsBySerialIgnoreCase(serialLimpio)) {
+            throw new DuplicateSerialException("Ya existe un equipo registrado con el serial: " + serialLimpio);
+        }
+
+        equipo.setSerial(serialLimpio);
+        equipo.setTipo(requestDTO.getTipo().trim());
+        equipo.setCaracteristicas(requestDTO.getCaracteristicas());
+        Equipo guardado = equipoRepository.save(equipo);
+
+        historialRepository.save(new Historial(guardado, usuario, guardado.getEstadoActual(),
+                guardado.getEstadoActual(), "Actualización de datos del equipo (serial, tipo o características)"));
+
+        return EquipoResponseDTO.fromEntity(guardado);
+    }
+
+    @Override
+    public void desactivarEquipo(Long id, String usernameResponsable) {
+        Usuario usuario = obtenerUsuarioPorUsername(usernameResponsable);
+        validarNoAuditor(usuario);
+
+        Equipo equipo = equipoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con ID: " + id));
+
+        // Baja lógica: el equipo y su Pasaporte Digital se conservan por trazabilidad
+        equipo.setActivo(false);
+        Equipo guardado = equipoRepository.save(equipo);
+
+        historialRepository.save(new Historial(guardado, usuario, guardado.getEstadoActual(),
+                guardado.getEstadoActual(), "Baja lógica del equipo (activo = false)"));
     }
 
     private Usuario obtenerUsuarioPorUsername(String username) {

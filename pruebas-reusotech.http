@@ -1,0 +1,138 @@
+### ============================================================
+### REUSOTECH - Pruebas de la API (extensión gratuita "REST Client")
+### Haz clic en "Send Request" sobre cada petición, de arriba hacia abajo.
+### Primero ejecuta los LOGIN: los tokens se guardan solos.
+### ============================================================
+
+@host = http://localhost:8080
+
+### ---------- LOGIN (uno por rol) ----------
+
+# @name loginSupervisor
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "supervisor", "password": "supervisor123" }
+
+###
+# @name loginRecepcion
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "recepcion", "password": "recepcion123" }
+
+###
+# @name loginTecnico
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "tecnico", "password": "tecnico123" }
+
+###
+# @name loginAuditor
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "auditor", "password": "auditor123" }
+
+###
+# @name loginAportante
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "aportante", "password": "aportante123" }
+
+###
+@tokenSupervisor = {{loginSupervisor.response.body.token}}
+@tokenRecepcion = {{loginRecepcion.response.body.token}}
+@tokenTecnico = {{loginTecnico.response.body.token}}
+@tokenAuditor = {{loginAuditor.response.body.token}}
+@tokenAportante = {{loginAportante.response.body.token}}
+
+### ---------- LECTURA ----------
+
+### Listar equipos (esperado: 200, 8 equipos DEMO-*)
+GET {{host}}/api/equipos
+Authorization: Bearer {{tokenSupervisor}}
+
+### Detalle de un equipo (200)
+GET {{host}}/api/equipos/1
+Authorization: Bearer {{tokenSupervisor}}
+
+### Pasaporte digital (200, equipo + historial)
+GET {{host}}/api/equipos/1/pasaporte
+Authorization: Bearer {{tokenSupervisor}}
+
+### Reporte de circularidad (200)
+GET {{host}}/api/reportes/circularidad
+Authorization: Bearer {{tokenSupervisor}}
+
+### ---------- CREAR ----------
+
+### Crear equipo como RECEPCION (201)
+POST {{host}}/api/equipos
+Authorization: Bearer {{tokenRecepcion}}
+Content-Type: application/json
+
+{ "serial": "SN-PRUEBA-001", "tipo": "Laptop", "caracteristicas": "Core i5 8GB" }
+
+### Repetir el mismo serial (409 SERIAL_DUPLICADO)
+POST {{host}}/api/equipos
+Authorization: Bearer {{tokenRecepcion}}
+Content-Type: application/json
+
+{ "serial": "SN-PRUEBA-001", "tipo": "Laptop", "caracteristicas": "Core i5 8GB" }
+
+### ---------- CAMBIO DE ESTADO ----------
+
+### Cerrar SIN evidencia como TECNICO (422 EVIDENCIA_DESTINO_INCOMPLETA)
+PATCH {{host}}/api/equipos/1/estado
+Authorization: Bearer {{tokenTecnico}}
+Content-Type: application/json
+
+{ "nuevoEstado": "REUTILIZADO", "motivo": "Prueba sin evidencia" }
+
+### Cerrar CON evidencia (200)
+PATCH {{host}}/api/equipos/1/estado
+Authorization: Bearer {{tokenTecnico}}
+Content-Type: application/json
+
+{ "nuevoEstado": "REUTILIZADO", "motivo": "Donación", "destinoFinal": "Colegio San Martín", "evidenciaDestino": "Acta 001-2026" }
+
+### ---------- EDITAR Y BAJA LÓGICA ----------
+
+### Editar equipo como RECEPCION (200)
+PUT {{host}}/api/equipos/2
+Authorization: Bearer {{tokenRecepcion}}
+Content-Type: application/json
+
+{ "serial": "DEMO-PC-0002-B", "tipo": "PC de escritorio", "caracteristicas": "HP ProDesk, RAM ampliada" }
+
+### Baja lógica como SUPERVISOR (204). Luego desaparece del listado
+DELETE {{host}}/api/equipos/3
+Authorization: Bearer {{tokenSupervisor}}
+
+### ---------- SEGURIDAD (todas deben dar 403) ----------
+
+### AUDITOR intenta crear (403)
+POST {{host}}/api/equipos
+Authorization: Bearer {{tokenAuditor}}
+Content-Type: application/json
+
+{ "serial": "SN-AUD-001", "tipo": "Monitor", "caracteristicas": "24in" }
+
+### AUDITOR intenta dar de baja (403)
+DELETE {{host}}/api/equipos/4
+Authorization: Bearer {{tokenAuditor}}
+
+### RECEPCION intenta dar de baja (403, solo SUPERVISOR)
+DELETE {{host}}/api/equipos/4
+Authorization: Bearer {{tokenRecepcion}}
+
+### APORTANTE consulta pasaporte (200)
+GET {{host}}/api/equipos/2/pasaporte
+Authorization: Bearer {{tokenAportante}}
+
+### APORTANTE intenta ver el reporte (403)
+GET {{host}}/api/reportes/circularidad
+Authorization: Bearer {{tokenAportante}}

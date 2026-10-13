@@ -117,3 +117,14 @@ Para ejecutar la suite completa de 14 pruebas:
 ```bash
 .\mvnw.cmd test
 ```
+
+
+---
+
+## Actualización: CRUD completo, datos de demostración e indicadores
+
+- `GET /api/equipos` y `GET /api/equipos/{id}/pasaporte` ahora también están abiertos a ENTIDAD_APORTANTE (consulta de pasaporte y trazabilidad, según la tabla de credenciales).
+- `PUT /api/equipos/{id}` (RECEPCION, SUPERVISOR): edita serial, tipo y características; valida serial único y registra el cambio en el Pasaporte Digital.
+- `DELETE /api/equipos/{id}` (SUPERVISOR): baja lógica (`activo = false`); el equipo y su historial se conservan por trazabilidad y dejan de aparecer en el listado.
+- `DataInitializer` carga, además de los 5 usuarios, 8 equipos demo (`DEMO-*`) en todos los estados del ciclo con su historial, solo si la tabla `equipos` está vacía.
+- Reporte de circularidad: `tasaExactitudRegistrosPct` y `tasaDuplicidadDetectadaPct` ahora se calculan con JPQL (`countRegistrosIncompletos`, `countSerialesRepetidos`).

@@ -35,6 +35,25 @@ public class EquipoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('RECEPCION', 'SUPERVISOR')")
+    public ResponseEntity<EquipoResponseDTO> actualizarEquipo(
+            @PathVariable Long id,
+            @Valid @RequestBody EquipoRequestDTO requestDTO,
+            Authentication authentication
+    ) {
+        String username = authentication != null ? authentication.getName() : "SISTEMA";
+        return ResponseEntity.ok(equipoService.actualizarEquipo(id, requestDTO, username));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SUPERVISOR')")
+    public ResponseEntity<Void> desactivarEquipo(@PathVariable Long id, Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "SISTEMA";
+        equipoService.desactivarEquipo(id, username);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{id}/estado")
     @PreAuthorize("hasAnyRole('TECNICO', 'SUPERVISOR')")
     public ResponseEntity<EquipoResponseDTO> cambiarEstado(
