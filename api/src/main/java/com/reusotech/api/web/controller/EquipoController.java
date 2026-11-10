@@ -5,6 +5,7 @@ import com.reusotech.api.domain.dto.EquipoRequestDTO;
 import com.reusotech.api.domain.dto.EquipoResponseDTO;
 import com.reusotech.api.domain.dto.PasaporteDigitalResponseDTO;
 import com.reusotech.api.domain.service.EquipoService;
+import com.reusotech.api.persistence.entity.EstadoEquipoEnum;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,8 +80,13 @@ public class EquipoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EquipoResponseDTO>> listarTodos() {
-        List<EquipoResponseDTO> lista = equipoService.listarTodos();
+    public ResponseEntity<List<EquipoResponseDTO>> listarTodos(
+            @RequestParam(required = false) String serial,
+            @RequestParam(required = false) EstadoEquipoEnum estado
+    ) {
+        List<EquipoResponseDTO> lista = (serial == null && estado == null)
+                ? equipoService.listarTodos()
+                : equipoService.listarTodos(serial, estado);
         return ResponseEntity.ok(lista);
     }
 }

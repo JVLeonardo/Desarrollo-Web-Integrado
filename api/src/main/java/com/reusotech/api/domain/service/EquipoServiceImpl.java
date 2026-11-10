@@ -175,7 +175,38 @@ public class EquipoServiceImpl implements EquipoService {
     @Override
     @Transactional(readOnly = true)
     public List<EquipoResponseDTO> listarTodos() {
-        return equipoRepository.findAll().stream()
+        List<Equipo> equipos = equipoRepository.findTop100ByActivoTrueOrderByIdDesc();
+        if (equipos == null || equipos.isEmpty()) {
+            equipos = equipoRepository.findAll();
+        }
+        return equipos.stream()
+                .filter(e -> !Boolean.FALSE.equals(e.getActivo()))
+                .limit(100)
+                .map(EquipoResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EquipoResponseDTO> listarTodos(String serial, EstadoEquipoEnum estado) {
+        boolean tieneSerial = serial != null && !serial.trim().isEmpty();
+        boolean tieneEstado = estado != null;
+
+        if (!tieneSerial && !tieneEstado) {
+            return listarTodos();
+        }
+
+        List<Equipo> equipos;
+        if (tieneSerial && tieneEstado) {
+            equipos = equipoRepository.findTop100ByActivoTrueAndSerialContainingIgnoreCaseAndEstadoActualOrderByIdDesc(
+                    serial.trim(), estado);
+        } else if (tieneSerial) {
+            equipos = equipoRepository.findTop100ByActivoTrueAndSerialContainingIgnoreCaseOrderByIdDesc(serial.trim());
+        } else {
+            equipos = equipoRepository.findTop100ByActivoTrueAndEstadoActualOrderByIdDesc(estado);
+        }
+
+        return equipos.stream()
                 .filter(e -> !Boolean.FALSE.equals(e.getActivo()))
                 .map(EquipoResponseDTO::fromEntity)
                 .collect(Collectors.toList());

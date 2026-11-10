@@ -18,6 +18,15 @@ public interface EquipoRepository extends JpaRepository<Equipo, Long> {
 
     List<Equipo> findByEstadoActual(EstadoEquipoEnum estadoActual);
 
+    List<Equipo> findTop100ByActivoTrueOrderByIdDesc();
+
+    List<Equipo> findTop100ByActivoTrueAndEstadoActualOrderByIdDesc(EstadoEquipoEnum estadoActual);
+
+    List<Equipo> findTop100ByActivoTrueAndSerialContainingIgnoreCaseOrderByIdDesc(String serial);
+
+    List<Equipo> findTop100ByActivoTrueAndSerialContainingIgnoreCaseAndEstadoActualOrderByIdDesc(
+            String serial, EstadoEquipoEnum estadoActual);
+
     long countByEstadoActual(EstadoEquipoEnum estadoActual);
 
     @Query("SELECT e.estadoActual, COUNT(e) FROM Equipo e GROUP BY e.estadoActual")

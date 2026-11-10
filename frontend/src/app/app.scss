@@ -1,0 +1,16 @@
+.app-layout {
+  background-color: #f8fafc;
+}
+
+.main-workspace {
+  min-width: 0;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 1040;
+}
+

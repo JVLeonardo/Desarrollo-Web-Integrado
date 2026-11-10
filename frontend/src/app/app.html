@@ -1,0 +1,32 @@
+@if (showShell()) {
+  <div class="app-layout d-flex min-vh-100">
+    <app-sidebar
+      [isOpen]="sidebarOpen()"
+      (closeSidebar)="sidebarOpen.set(false)"
+    ></app-sidebar>
+
+    @if (sidebarOpen()) {
+      <div
+        class="sidebar-backdrop d-lg-none"
+        (click)="sidebarOpen.set(false)"
+      ></div>
+    }
+
+    <div class="main-workspace flex-grow-1 d-flex flex-column min-w-0">
+      <app-navbar (toggleSidebar)="sidebarOpen.set(!sidebarOpen())"></app-navbar>
+
+      <main class="flex-grow-1">
+        <router-outlet></router-outlet>
+      </main>
+
+      <footer class="px-4 py-3 text-muted small border-top bg-white d-flex flex-wrap justify-content-between gap-2">
+        <span>
+          <strong>ReusoTech Circular</strong> · Unidad 3 (APF3) · Trazabilidad de Activos RAEE y Pasaporte Digital
+        </span>
+        <span>Spring Boot 3 + Neon Cloud PostgreSQL + Angular Standalone + SASS</span>
+      </footer>
+    </div>
+  </div>
+} @else {
+  <router-outlet></router-outlet>
+}
