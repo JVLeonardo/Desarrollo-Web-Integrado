@@ -12,4 +12,4 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "java -XX:MaxRAMPercentage=75.0 -XX:+UseSerialGC -Dserver.port=${PORT:-8080} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java -XX:MaxRAMPercentage=75.0 -XX:+UseSerialGC -Dserver.port=${PORT:-8080} -jar app.jar --spring.datasource.url=jdbc:postgresql://ep-floral-cake-betd5ovf-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require --spring.datasource.username=neondb_owner --spring.datasource.password=npg_0cILvez2hQBY"]
