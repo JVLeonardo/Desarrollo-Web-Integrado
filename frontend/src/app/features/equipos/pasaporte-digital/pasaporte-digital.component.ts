@@ -212,50 +212,45 @@ import { AlertBannerComponent } from '../../../shared/components/alert-banner/al
   `,
   styles: [`
     .passport-hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 65%, #064e3b 100%);
+      background: var(--rt-surface);
+      border: 1px solid var(--rt-border);
+      border-radius: 8px !important;
+      box-shadow: none !important;
+      color: var(--rt-text) !important;
     }
-
-    .bg-emerald { background-color: #10b981; }
-    .text-emerald { color: #10b981; }
-    .text-emerald-light { color: #6ee7b7; }
-    .text-slate-300 { color: #cbd5e1; }
-
+    .bg-emerald { background-color: var(--rt-accent) !important; color: #07130e !important; }
+    .text-emerald { color: var(--rt-accent) !important; }
+    .text-emerald-light { color: var(--rt-accent) !important; }
+    .text-slate-300 { color: var(--rt-muted) !important; }
     .passport-seal {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px dashed rgba(16, 185, 129, 0.5);
+      background: var(--rt-bg);
+      border: 1px dashed var(--rt-border-strong);
+      border-radius: 6px !important;
     }
-
-    .timeline-container {
-      border-left: 2px solid #cbd5e1;
-      margin-left: 1rem;
-    }
-
+    .timeline-container { border-left: 1px solid var(--rt-border-strong); margin-left: 1rem; }
     .timeline-marker {
       position: absolute;
       left: -31px;
-      top: 10px;
-      width: 28px;
-      height: 28px;
+      top: 12px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: #10b981;
-      color: #ffffff;
-      font-size: 0.78rem;
-      font-weight: 700;
+      background: var(--rt-surface-2);
+      color: var(--rt-accent);
+      border: 1px solid var(--rt-accent);
+      font-family: var(--rt-mono);
+      font-size: 0.6875rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 0 4px #ffffff;
+      box-shadow: 0 0 0 4px var(--rt-bg);
     }
-
     .timeline-card {
-      background: #f8fafc;
-      transition: transform 0.15s ease;
-
-      &:hover {
-        transform: translateX(3px);
-        border-color: #10b981 !important;
-      }
+      background: var(--rt-surface) !important;
+      border-radius: 6px !important;
+      transition: border-color 0.15s ease;
     }
+    .timeline-card:hover { border-color: var(--rt-border-strong) !important; }
   `]
 })
 export class PasaporteDigitalComponent implements OnInit {

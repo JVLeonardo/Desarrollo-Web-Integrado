@@ -136,21 +136,19 @@ import { AlertBannerComponent } from '../../../shared/components/alert-banner/al
     </div>
   `,
   styles: [`
-    .auth-wrapper {
-      background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.12), transparent 45%),
-                  #f1f5f9;
-    }
-
+    .auth-wrapper { background: var(--rt-bg); }
+    .eco-card { box-shadow: none !important; }
     .brand-badge {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #10b981, #0d9488);
-      color: #ffffff;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      background: var(--rt-accent-soft);
+      color: var(--rt-accent);
+      border: 1px solid color-mix(in srgb, var(--rt-accent) 35%, transparent);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.35rem;
+      font-size: 1.15rem;
     }
   `]
 })

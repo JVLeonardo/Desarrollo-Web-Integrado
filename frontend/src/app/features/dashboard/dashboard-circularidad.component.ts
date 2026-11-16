@@ -265,32 +265,15 @@ interface FilaDistribucion {
   `,
   styles: [`
     .bg-emerald-soft {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(13, 148, 136, 0.08) 100%);
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      background: var(--rt-accent-soft);
+      border: 1px solid color-mix(in srgb, var(--rt-accent) 30%, transparent);
+      border-radius: 6px !important;
     }
-
-    .bg-emerald-subtle {
-      background: rgba(16, 185, 129, 0.1);
-      color: #047857;
-    }
-
-    .metric-mini {
-      background: #f8fafc;
-    }
-
-    .dist-row {
-      background: #f8fafc;
-      border: 1px solid rgba(226, 232, 240, 0.7);
-    }
-
-    .spin {
-      animation: spinAnim 0.9s linear infinite;
-    }
-
-    @keyframes spinAnim {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+    .bg-emerald-subtle { background: var(--rt-accent-soft); color: var(--rt-accent); }
+    .metric-mini { background: var(--rt-bg); border-radius: 6px !important; border-color: var(--rt-border) !important; }
+    .dist-row { background: var(--rt-bg); border: 1px solid var(--rt-border); border-radius: 6px !important; }
+    .spin { animation: spinAnim 0.9s linear infinite; }
+    @keyframes spinAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   `]
 })
 export class DashboardCircularidadComponent implements OnInit {

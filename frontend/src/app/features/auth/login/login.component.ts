@@ -170,66 +170,47 @@ interface DemoAccount {
     </div>
   `,
   styles: [`
-    .auth-wrapper {
-      background: radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.12), transparent 45%),
-                  radial-gradient(circle at 85% 80%, rgba(13, 148, 136, 0.12), transparent 45%),
-                  #f1f5f9;
-    }
-
+    .auth-wrapper { background: var(--rt-bg); }
     .auth-shell {
       width: 100%;
-      max-width: 1060px;
-      border-radius: 24px;
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      background: #ffffff;
+      max-width: 980px;
+      border-radius: 8px;
+      border: 1px solid var(--rt-border);
+      background: var(--rt-surface);
+      box-shadow: none !important;
     }
-
-    .auth-hero {
-      background: linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #064e3b 100%);
-    }
-
+    .auth-hero { background: var(--rt-surface-2); border-right: 1px solid var(--rt-border); color: var(--rt-text) !important; }
     .hero-pill {
-      background: rgba(16, 185, 129, 0.16);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      font-size: 0.78rem;
-      font-weight: 600;
+      background: var(--rt-accent-soft);
+      color: var(--rt-accent);
+      border: 1px solid color-mix(in srgb, var(--rt-accent) 35%, transparent);
+      font-size: 0.7188rem;
+      font-weight: 500;
+      border-radius: 4px !important;
     }
-
-    .text-emerald { color: #10b981; }
-    .text-emerald-light { color: #6ee7b7; }
-    .text-slate-300 { color: #cbd5e1; }
-
+    .text-emerald { color: var(--rt-accent) !important; }
+    .text-emerald-light { color: var(--rt-muted) !important; }
+    .text-slate-300 { color: var(--rt-muted) !important; }
     .hero-metric {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--rt-surface);
+      border: 1px solid var(--rt-border);
+      border-radius: 6px !important;
     }
-
     .demo-panel {
-      background: rgba(15, 23, 42, 0.55);
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      background: var(--rt-bg);
+      border: 1px solid var(--rt-border);
+      border-radius: 6px !important;
     }
-
     .demo-role-btn {
-      background: rgba(255, 255, 255, 0.08);
-      color: #f8fafc;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 10px;
-      padding: 0.38rem 0.65rem;
-      transition: all 0.18s ease;
-
-      &:hover {
-        background: rgba(16, 185, 129, 0.22);
-        border-color: #10b981;
-        color: #ffffff;
-        transform: translateY(-1px);
-      }
-
-      i {
-        color: #34d399;
-        font-size: 1rem;
-      }
+      background: var(--rt-surface-2);
+      color: var(--rt-text);
+      border: 1px solid var(--rt-border);
+      border-radius: 5px;
+      padding: 0.35rem 0.6rem;
+      transition: border-color 0.15s, background 0.15s;
     }
+    .demo-role-btn:hover { border-color: var(--rt-accent); background: var(--rt-surface-3); color: var(--rt-text); }
+    .demo-role-btn i { color: var(--rt-accent); font-size: 0.95rem; }
   `]
 })
 export class LoginComponent {

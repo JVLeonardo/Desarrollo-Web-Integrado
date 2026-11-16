@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   CambioEstadoRequestDTO,
   EquipoRequestDTO,
@@ -14,7 +15,7 @@ import {
 })
 export class EquipoService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/equipos';
+  private readonly API_URL = `${environment.apiUrl}/equipos`;
 
   /**
    * GET /api/equipos

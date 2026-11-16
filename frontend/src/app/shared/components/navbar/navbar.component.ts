@@ -9,51 +9,30 @@ import { ROLES_METADATA } from '../../../core/models';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <header class="glass-navbar sticky-top px-3 px-lg-4 py-2">
-      <div class="d-flex align-items-center justify-content-between">
+    <header class="glass-navbar sticky-top px-3 px-lg-4">
+      <div class="bar">
         <div class="d-flex align-items-center gap-3">
-          <button
-            type="button"
-            class="btn btn-sm btn-light d-lg-none border"
-            (click)="toggleSidebar.emit()"
-            title="Menú de navegación"
-          >
-            <i class="bi bi-list fs-5"></i>
+          <button type="button" class="icon-btn d-lg-none" (click)="toggleSidebar.emit()" aria-label="Menú">
+            <i class="bi bi-list"></i>
           </button>
-
-          <div class="d-none d-sm-flex align-items-center gap-2">
-            <span class="cloud-pill">
-              <span class="pulse-dot"></span>
-              <i class="bi bi-database-check me-1"></i>
-              Neon Cloud PostgreSQL · 20K Dataset Ready
-            </span>
-          </div>
+          <span class="env d-none d-sm-inline-flex">
+            <span class="status-dot"></span>PostgreSQL · Neon
+          </span>
         </div>
 
         @if (user(); as currentUser) {
           <div class="d-flex align-items-center gap-3">
             <div class="text-end d-none d-md-block">
-              <div class="fw-bold text-dark small lh-sm">{{ currentUser.nombreCompleto }}</div>
-              <div class="text-muted" style="font-size: 0.75rem;">
-                &#64;{{ currentUser.username }} · {{ currentUser.email }}
-              </div>
+              <div class="u-name">{{ currentUser.nombreCompleto }}</div>
+              <div class="u-mail">{{ currentUser.email }}</div>
             </div>
 
             @if (rolMeta(); as meta) {
-              <span class="role-badge" [ngClass]="meta.badgeClass" [title]="meta.permisosResumen">
-                <i class="bi" [ngClass]="meta.icono"></i>
-                <span>{{ currentUser.rol }}</span>
-              </span>
+              <span class="role" [title]="meta.permisosResumen">{{ currentUser.rol }}</span>
             }
 
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-danger rounded-3 d-flex align-items-center gap-1 px-2 py-1"
-              (click)="onLogout()"
-              title="Cerrar sesión"
-            >
+            <button type="button" class="icon-btn" (click)="onLogout()" title="Cerrar sesión" aria-label="Cerrar sesión">
               <i class="bi bi-box-arrow-right"></i>
-              <span class="d-none d-sm-inline">Salir</span>
             </button>
           </div>
         }
@@ -61,71 +40,56 @@ import { ROLES_METADATA } from '../../../core/models';
     </header>
   `,
   styles: [`
-    .glass-navbar {
-      min-height: 64px;
+    .glass-navbar { z-index: 1020; }
+
+    .bar {
+      min-height: 52px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      z-index: 1020;
-    }
-
-    .cloud-pill {
-      display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 600;
-      background: rgba(16, 185, 129, 0.1);
-      color: #047857;
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      justify-content: space-between;
     }
 
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
+    .env {
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--rt-mono);
+      font-size: 0.7188rem;
+      color: var(--rt-muted);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+      background: var(--rt-accent);
     }
 
-    .role-badge {
+    .u-name { font-size: 0.8125rem; font-weight: 600; line-height: 1.2; color: var(--rt-text); }
+    .u-mail { font-size: 0.7188rem; color: var(--rt-faint); }
+
+    .role {
+      font-family: var(--rt-mono);
+      font-size: 0.6875rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      color: var(--rt-accent);
+      border: 1px solid color-mix(in srgb, var(--rt-accent) 35%, transparent);
+      background: var(--rt-accent-soft);
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.35rem 0.75rem;
-      border-radius: 10px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--rt-border);
+      border-radius: 6px;
+      color: var(--rt-muted);
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
     }
-
-    .rol-supervisor {
-      background: rgba(16, 185, 129, 0.15);
-      color: #065f46;
-      border: 1px solid rgba(16, 185, 129, 0.35);
-    }
-    .rol-recepcion {
-      background: rgba(14, 165, 233, 0.15);
-      color: #075985;
-      border: 1px solid rgba(14, 165, 233, 0.35);
-    }
-    .rol-tecnico {
-      background: rgba(245, 158, 11, 0.16);
-      color: #92400e;
-      border: 1px solid rgba(245, 158, 11, 0.35);
-    }
-    .rol-auditor {
-      background: rgba(99, 102, 241, 0.15);
-      color: #3730a3;
-      border: 1px solid rgba(99, 102, 241, 0.35);
-    }
-    .rol-aportante {
-      background: rgba(13, 148, 136, 0.15);
-      color: #115e59;
-      border: 1px solid rgba(13, 148, 136, 0.35);
-    }
+    .icon-btn:hover { color: var(--rt-text); border-color: var(--rt-border-strong); background: var(--rt-surface-2); }
   `]
 })
 export class NavbarComponent {
@@ -142,4 +106,3 @@ export class NavbarComponent {
     this.authService.logout();
   }
 }
-

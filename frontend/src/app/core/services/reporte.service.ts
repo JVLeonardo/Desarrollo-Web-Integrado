@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ReporteCircularidadDTO } from '../models';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { ReporteCircularidadDTO } from '../models';
 })
 export class ReporteService {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/reportes';
+  private readonly API_URL = `${environment.apiUrl}/reportes`;
 
   /**
    * GET /api/reportes/circularidad

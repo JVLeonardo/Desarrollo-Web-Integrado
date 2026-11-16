@@ -1,16 +1,27 @@
 .app-layout {
-  background-color: #f8fafc;
+  background-color: var(--rt-bg);
 }
 
 .main-workspace {
   min-width: 0;
 }
 
+main {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(2px);
+  background: rgba(5, 8, 12, 0.6);
   z-index: 1040;
 }
 
+footer {
+  background: var(--rt-bg);
+  border-color: var(--rt-border) !important;
+  color: var(--rt-faint);
+  font-size: 0.75rem;
+}

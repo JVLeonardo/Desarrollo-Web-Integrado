@@ -8,27 +8,21 @@ import { ApiErrorResponse } from '../../../core/models';
   imports: [CommonModule],
   template: `
     @if (apiError) {
-      <div class="alert-eco alert-eco-danger d-flex align-items-start justify-content-between gap-3 mb-3" role="alert">
-        <div class="d-flex align-items-start gap-3">
-          <div class="alert-icon">
-            <i class="bi bi-exclamation-octagon-fill"></i>
+      <div class="banner banner-danger" role="alert">
+        <i class="bi bi-exclamation-circle"></i>
+        <div class="flex-grow-1">
+          <div class="banner-title">
+            <span class="mono code">{{ apiError.status || 400 }}</span>
+            {{ apiError.error }}
           </div>
-          <div>
-            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-              <span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle">
-                HTTP {{ apiError.status || 400 }}
-              </span>
-              <strong class="font-display">{{ apiError.error }}</strong>
-            </div>
-            <p class="mb-0 small">{{ apiError.message }}</p>
-            @if (apiError.details) {
-              <ul class="mb-0 mt-1 ps-3 small">
-                @for (item of objectEntries(apiError.details); track item[0]) {
-                  <li><strong>{{ item[0] }}:</strong> {{ item[1] }}</li>
-                }
-              </ul>
-            }
-          </div>
+          <div class="banner-text">{{ apiError.message }}</div>
+          @if (apiError.details) {
+            <ul class="banner-list">
+              @for (item of objectEntries(apiError.details); track item[0]) {
+                <li><span class="mono">{{ item[0] }}</span> — {{ item[1] }}</li>
+              }
+            </ul>
+          }
         </div>
         @if (dismissible) {
           <button type="button" class="btn-close" aria-label="Cerrar" (click)="closed.emit()"></button>
@@ -37,15 +31,10 @@ import { ApiErrorResponse } from '../../../core/models';
     }
 
     @if (successMessage) {
-      <div class="alert-eco alert-eco-success d-flex align-items-center justify-content-between gap-3 mb-3" role="status">
-        <div class="d-flex align-items-center gap-3">
-          <div class="alert-icon success">
-            <i class="bi bi-check-circle-fill"></i>
-          </div>
-          <div>
-            <strong class="d-block font-display">Operación exitosa</strong>
-            <span class="small">{{ successMessage }}</span>
-          </div>
+      <div class="banner banner-success" role="status">
+        <i class="bi bi-check-circle"></i>
+        <div class="flex-grow-1">
+          <div class="banner-text">{{ successMessage }}</div>
         </div>
         @if (dismissible) {
           <button type="button" class="btn-close" aria-label="Cerrar" (click)="closed.emit()"></button>
@@ -54,34 +43,31 @@ import { ApiErrorResponse } from '../../../core/models';
     }
   `,
   styles: [`
-    .alert-eco {
-      border-radius: 14px;
-      padding: 0.95rem 1.15rem;
-      animation: fadeIn 0.2s ease-out;
+    .banner {
+      --c: var(--rt-accent);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+      background: color-mix(in srgb, var(--c) 8%, var(--rt-surface));
+      font-size: 0.8125rem;
     }
-
-    .alert-eco-danger {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #7f1d1d;
+    .banner > i { color: var(--c); font-size: 1rem; margin-top: 0.1rem; }
+    .banner-danger { --c: var(--rt-danger); }
+    .banner-title { font-weight: 600; color: var(--rt-text); }
+    .banner-title .code {
+      font-size: 0.6875rem;
+      padding: 0.05rem 0.35rem;
+      margin-right: 0.35rem;
+      border-radius: 3px;
+      color: var(--c);
+      border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
     }
-
-    .alert-eco-success {
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #064e3b;
-    }
-
-    .alert-icon {
-      font-size: 1.35rem;
-      color: #dc2626;
-      line-height: 1;
-      margin-top: 0.1rem;
-
-      &.success {
-        color: #059669;
-      }
-    }
+    .banner-text { color: var(--rt-muted); }
+    .banner-list { margin: 0.4rem 0 0; padding-left: 1.1rem; color: var(--rt-muted); }
   `]
 })
 export class AlertBannerComponent {
@@ -94,4 +80,3 @@ export class AlertBannerComponent {
     return Object.entries(obj);
   }
 }
-

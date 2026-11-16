@@ -29,225 +29,153 @@ import { CambioEstadoModalComponent } from '../cambio-estado-modal/cambio-estado
   ],
   template: `
     <div class="container-fluid py-4 px-3 px-lg-4">
-      <!-- Page Header -->
-      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+      <div class="page-header">
         <div>
-          <div class="d-flex align-items-center gap-2 mb-1">
-            <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">
-              <i class="bi bi-lightning-charge-fill me-1"></i>Consulta Optimizada Top 100 (20K Neon DB)
-            </span>
-            <span class="badge bg-light text-secondary border">
-              Mostrando {{ equiposFiltrados().length }} registros activos
-            </span>
-          </div>
-          <h2 class="font-display fw-bold h3 mb-0">Inventario y Trazabilidad de Equipos RAEE</h2>
+          <span class="eyebrow">Inventario</span>
+          <h2>Equipos y trazabilidad</h2>
         </div>
 
         <div class="d-flex align-items-center gap-2">
-          <button
-            type="button"
-            class="btn btn-eco-outline d-flex align-items-center gap-2"
-            (click)="cargarEquipos()"
-            [disabled]="loading()"
-          >
-            <i class="bi bi-arrow-clockwise"></i>
-            <span>Refrescar</span>
+          <button type="button" class="btn btn-eco-outline" (click)="cargarEquipos()" [disabled]="loading()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
           </button>
 
           @if (authService.canCreateOrEditEquipo()) {
-            <button
-              type="button"
-              class="btn btn-eco-primary d-flex align-items-center gap-2"
-              (click)="abrirModalCrear()"
-            >
-              <i class="bi bi-plus-lg"></i>
-              <span>Recepcionar Equipo</span>
+            <button type="button" class="btn btn-eco-primary" (click)="abrirModalCrear()">
+              <i class="bi bi-plus-lg me-1"></i>Recepcionar equipo
             </button>
           }
         </div>
       </div>
 
-      <!-- Feedback Banners -->
       <app-alert-banner
         [apiError]="error()"
         [successMessage]="successMessage()"
         (closed)="error.set(null); successMessage.set(null)"
       ></app-alert-banner>
 
-      <!-- Search & Filter Bar -->
-      <div class="eco-card mb-4 p-3">
-        <form class="row g-3 align-items-end" (ngSubmit)="buscarEnServidor()">
-          <div class="col-md-5">
-            <label class="form-label" for="filtroSerial">
-              <i class="bi bi-upc-scan me-1"></i>Buscar por Serial o Tipo
-            </label>
-            <div class="input-group">
-              <span class="input-group-text bg-light border-end-0 text-secondary">
-                <i class="bi bi-search"></i>
-              </span>
-              <input
-                id="filtroSerial"
-                name="filtroSerial"
-                type="text"
-                class="form-control border-start-0"
-                placeholder="Ej. DEMO-LAP, SN-PC, Laptop..."
-                [ngModel]="filtroTexto()"
-                (ngModelChange)="filtroTexto.set($event)"
-              />
-            </div>
-          </div>
+      <!-- Filtros -->
+      <form class="filters" (ngSubmit)="buscarEnServidor()">
+        <div class="filter-search">
+          <i class="bi bi-search"></i>
+          <input
+            id="filtroSerial"
+            name="filtroSerial"
+            type="text"
+            class="form-control"
+            placeholder="Buscar por serial…"
+            [ngModel]="filtroTexto()"
+            (ngModelChange)="filtroTexto.set($event)"
+            aria-label="Buscar por serial"
+          />
+        </div>
 
-          <div class="col-md-4">
-            <label class="form-label" for="filtroEstado">
-              <i class="bi bi-funnel me-1"></i>Filtrar por Estado del Ciclo
-            </label>
-            <select
-              id="filtroEstado"
-              name="filtroEstado"
-              class="form-select"
-              [ngModel]="filtroEstado()"
-              (ngModelChange)="onEstadoFilterChange($event)"
-            >
-              <option value="">Todos los estados (Últimos 100)</option>
-              @for (est of estadosLista; track est.codigo) {
-                <option [value]="est.codigo">{{ est.etiqueta }}</option>
-              }
-            </select>
-          </div>
+        <select
+          id="filtroEstado"
+          name="filtroEstado"
+          class="form-select filter-select"
+          [ngModel]="filtroEstado()"
+          (ngModelChange)="onEstadoFilterChange($event)"
+          aria-label="Filtrar por estado"
+        >
+          <option value="">Todos los estados</option>
+          @for (est of estadosLista; track est.codigo) {
+            <option [value]="est.codigo">{{ est.etiqueta }}</option>
+          }
+        </select>
 
-          <div class="col-md-3 d-flex gap-2">
-            <button type="submit" class="btn btn-eco-primary flex-grow-1">
-              <i class="bi bi-cloud-arrow-down me-1"></i>Consultar DB
-            </button>
-            @if (filtroTexto() || filtroEstado()) {
-              <button
-                type="button"
-                class="btn btn-eco-outline"
-                (click)="limpiarFiltros()"
-                title="Limpiar filtros"
-              >
-                <i class="bi bi-x-lg"></i>
-              </button>
-            }
-          </div>
-        </form>
-      </div>
+        <button type="submit" class="btn btn-eco-outline">Buscar</button>
+        @if (filtroTexto() || filtroEstado()) {
+          <button type="button" class="btn btn-eco-outline" (click)="limpiarFiltros()" title="Limpiar filtros">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        }
 
-      <!-- Data Table -->
+        <span class="result-count mono">{{ equiposFiltrados().length }} resultados · máx. 100</span>
+      </form>
+
+      <!-- Tabla -->
       <div class="eco-card p-0 overflow-hidden">
         @if (loading()) {
-          <div class="text-center py-5">
-            <div class="spinner-border text-success mb-3" role="status"></div>
-            <h6 class="font-display fw-bold mb-1">Consultando padrón de equipos en Neon Cloud...</h6>
-            <p class="text-muted small mb-0">Recuperando lote optimizado de registros activos.</p>
+          <div class="state-box">
+            <div class="spinner-border spinner-border-sm text-success mb-2" role="status"></div>
+            <div>Consultando inventario…</div>
           </div>
         } @else if (equiposFiltrados().length === 0) {
-          <div class="text-center py-5 px-3">
-            <i class="bi bi-inbox display-4 text-secondary opacity-50 d-block mb-2"></i>
-            <h5 class="font-display fw-bold">No se encontraron equipos con los criterios actuales</h5>
-            <p class="text-muted small mb-3">
-              Pruebe limpiando los filtros o realice una búsqueda directa en la base de datos.
-            </p>
-            <button type="button" class="btn btn-sm btn-eco-outline" (click)="limpiarFiltros()">
-              Restablecer listado
-            </button>
+          <div class="state-box">
+            <i class="bi bi-inbox"></i>
+            <div class="fw-semibold">Sin resultados</div>
+            <div class="state-hint">Ajusta los filtros o restablece el listado.</div>
+            <button type="button" class="btn btn-eco-outline mt-3" (click)="limpiarFiltros()">Restablecer</button>
           </div>
         } @else {
           <div class="table-responsive">
             <table class="table table-eco align-middle">
               <thead>
                 <tr>
-                  <th>ID / Serial</th>
-                  <th>Tipo y Especificaciones</th>
-                  <th>Estado Actual</th>
-                  <th>Destino / Evidencia</th>
+                  <th>Serial</th>
+                  <th>Equipo</th>
+                  <th>Estado</th>
+                  <th>Destino</th>
                   <th>Ingreso</th>
-                  <th class="text-end">Acciones RBAC</th>
+                  <th class="text-end">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 @for (eq of equiposPaginados(); track eq.id) {
                   <tr>
                     <td>
-                      <div class="fw-bold font-monospace text-dark">{{ eq.serial }}</div>
-                      <span class="text-muted" style="font-size: 0.74rem;">ID #{{ eq.id }}</span>
+                      <div class="serial mono">{{ eq.serial }}</div>
+                      <div class="row-id mono">#{{ eq.id }}</div>
                     </td>
 
-                    <td style="max-width: 290px;">
-                      <div class="fw-semibold text-dark">{{ eq.tipo }}</div>
-                      <div class="text-muted small text-truncate" [title]="eq.caracteristicas || ''">
-                        {{ eq.caracteristicas || 'Sin especificaciones' }}
+                    <td class="cell-wide">
+                      <div class="fw-semibold">{{ eq.tipo }}</div>
+                      <div class="cell-sub text-truncate" [title]="eq.caracteristicas || ''">
+                        {{ eq.caracteristicas || '—' }}
                       </div>
                     </td>
 
-                    <td>
-                      <app-estado-badge [estado]="eq.estadoActual"></app-estado-badge>
-                    </td>
+                    <td><app-estado-badge [estado]="eq.estadoActual"></app-estado-badge></td>
 
-                    <td style="max-width: 240px;">
+                    <td class="cell-wide">
                       @if (eq.destinoFinal) {
-                        <div class="small fw-semibold text-dark text-truncate" [title]="eq.destinoFinal">
-                          <i class="bi bi-geo-alt-fill text-success me-1"></i>{{ eq.destinoFinal }}
-                        </div>
+                        <div class="text-truncate" [title]="eq.destinoFinal">{{ eq.destinoFinal }}</div>
                         @if (eq.evidenciaDestino) {
-                          <div class="text-muted text-truncate" style="font-size: 0.75rem;" [title]="eq.evidenciaDestino">
-                            <i class="bi bi-file-earmark-check me-1"></i>{{ eq.evidenciaDestino }}
+                          <div class="cell-sub text-truncate" [title]="eq.evidenciaDestino">
+                            <i class="bi bi-paperclip"></i> {{ eq.evidenciaDestino }}
                           </div>
                         }
                       } @else {
-                        <span class="text-muted small fst-italic">En flujo operativo</span>
+                        <span class="cell-sub">En proceso</span>
                       }
                     </td>
 
                     <td>
-                      <div class="small text-secondary">{{ eq.fechaIngreso | date:'dd/MM/yyyy' }}</div>
-                      <div class="text-muted" style="font-size: 0.72rem;">{{ eq.fechaIngreso | date:'HH:mm' }} hrs</div>
+                      <div>{{ eq.fechaIngreso | date: 'dd/MM/yyyy' }}</div>
+                      <div class="cell-sub mono">{{ eq.fechaIngreso | date: 'HH:mm' }}</div>
                     </td>
 
                     <td class="text-end">
-                      <div class="d-inline-flex align-items-center gap-1">
-                        <!-- Pasaporte Digital (Todos los roles) -->
-                        <a
-                          [routerLink]="['/equipos', eq.id, 'pasaporte']"
-                          class="btn btn-sm btn-outline-success rounded-3 d-inline-flex align-items-center gap-1"
-                          title="Ver Pasaporte Digital e Historial"
-                        >
+                      <div class="actions">
+                        <a [routerLink]="['/equipos', eq.id, 'pasaporte']" class="act" title="Pasaporte digital">
                           <i class="bi bi-qr-code"></i>
-                          <span class="d-none d-xl-inline">Pasaporte</span>
                         </a>
 
-                        <!-- Cambiar Estado (TECNICO, SUPERVISOR) -->
                         @if (authService.canChangeEstado()) {
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-outline-warning rounded-3 text-dark-emphasis"
-                            (click)="abrirModalEstado(eq)"
-                            title="Cambiar estado del ciclo de vida (PATCH)"
-                          >
+                          <button type="button" class="act" (click)="abrirModalEstado(eq)" title="Cambiar estado">
                             <i class="bi bi-arrow-left-right"></i>
                           </button>
                         }
 
-                        <!-- Editar Datos (RECEPCION, SUPERVISOR) -->
                         @if (authService.canCreateOrEditEquipo()) {
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-outline-primary rounded-3"
-                            (click)="abrirModalEditar(eq)"
-                            title="Editar datos del equipo (PUT)"
-                          >
+                          <button type="button" class="act" (click)="abrirModalEditar(eq)" title="Editar">
                             <i class="bi bi-pencil"></i>
                           </button>
                         }
 
-                        <!-- Baja Lógica (Solo SUPERVISOR) -->
                         @if (authService.canDeleteEquipo()) {
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-outline-danger rounded-3"
-                            (click)="confirmarBajaLogica(eq)"
-                            title="Baja lógica del equipo (DELETE)"
-                          >
+                          <button type="button" class="act act-danger" (click)="confirmarBajaLogica(eq)" title="Dar de baja">
                             <i class="bi bi-trash3"></i>
                           </button>
                         }
@@ -259,27 +187,15 @@ import { CambioEstadoModalComponent } from '../cambio-estado-modal/cambio-estado
             </table>
           </div>
 
-          <!-- Pagination Footer -->
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 px-4 py-3 bg-light border-top">
-            <div class="small text-muted">
-              Mostrando página <strong>{{ paginaActual() }}</strong> de <strong>{{ totalPaginas() }}</strong>
-              ({{ equiposFiltrados().length }} equipos activos en vista)
-            </div>
-            <div class="btn-group btn-group-sm">
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                [disabled]="paginaActual() <= 1"
-                (click)="paginaActual.set(paginaActual() - 1)"
-              >
+          <div class="pager">
+            <span class="mono">Página {{ paginaActual() }} / {{ totalPaginas() }}</span>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-eco-outline btn-sm" [disabled]="paginaActual() <= 1"
+                      (click)="paginaActual.set(paginaActual() - 1)">
                 <i class="bi bi-chevron-left"></i> Anterior
               </button>
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                [disabled]="paginaActual() >= totalPaginas()"
-                (click)="paginaActual.set(paginaActual() + 1)"
-              >
+              <button type="button" class="btn btn-eco-outline btn-sm" [disabled]="paginaActual() >= totalPaginas()"
+                      (click)="paginaActual.set(paginaActual() + 1)">
                 Siguiente <i class="bi bi-chevron-right"></i>
               </button>
             </div>
@@ -288,7 +204,6 @@ import { CambioEstadoModalComponent } from '../cambio-estado-modal/cambio-estado
       </div>
     </div>
 
-    <!-- Modal Crear / Editar Equipo -->
     @if (mostrarModalForm()) {
       <app-equipo-form
         [equipoEditar]="equipoSeleccionadoForm()"
@@ -297,7 +212,6 @@ import { CambioEstadoModalComponent } from '../cambio-estado-modal/cambio-estado
       ></app-equipo-form>
     }
 
-    <!-- Modal Cambiar Estado -->
     @if (equipoSeleccionadoEstado(); as eqEstado) {
       <app-cambio-estado-modal
         [equipo]="eqEstado"
@@ -305,7 +219,73 @@ import { CambioEstadoModalComponent } from '../cambio-estado-modal/cambio-estado
         (cancelled)="equipoSeleccionadoEstado.set(null)"
       ></app-cambio-estado-modal>
     }
-  `
+  `,
+  styles: [`
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-search { position: relative; flex: 1 1 260px; max-width: 360px; }
+    .filter-search i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--rt-faint);
+      font-size: 0.8rem;
+    }
+    .filter-search .form-control { padding-left: 2.1rem; }
+    .filter-select { width: 200px; }
+
+    .result-count { margin-left: auto; font-size: 0.7188rem; color: var(--rt-faint); }
+
+    .serial { font-size: 0.8125rem; font-weight: 500; color: var(--rt-text); }
+    .row-id { font-size: 0.6875rem; color: var(--rt-faint); }
+    .cell-wide { max-width: 260px; }
+    .cell-sub { font-size: 0.75rem; color: var(--rt-faint); }
+
+    .actions { display: inline-flex; gap: 4px; }
+    .act {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--rt-border);
+      border-radius: 5px;
+      color: var(--rt-muted);
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .act:hover { color: var(--rt-text); border-color: var(--rt-border-strong); background: var(--rt-surface-3); }
+    .act-danger:hover { color: var(--rt-danger); border-color: color-mix(in srgb, var(--rt-danger) 45%, transparent); }
+
+    .state-box {
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--rt-muted);
+      font-size: 0.8125rem;
+    }
+    .state-box > i { font-size: 1.75rem; color: var(--rt-faint); display: block; margin-bottom: 0.5rem; }
+    .state-hint { color: var(--rt-faint); font-size: 0.75rem; }
+
+    .pager {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.625rem 1rem;
+      border-top: 1px solid var(--rt-border);
+      background: var(--rt-surface-2);
+      font-size: 0.75rem;
+      color: var(--rt-muted);
+    }
+  `]
 })
 export class EquiposListComponent implements OnInit {
   private readonly equipoService = inject(EquipoService);
@@ -322,7 +302,6 @@ export class EquiposListComponent implements OnInit {
   readonly paginaActual = signal(1);
   readonly itemsPorPagina = 15;
 
-  // Modals state
   readonly mostrarModalForm = signal(false);
   readonly equipoSeleccionadoForm = signal<EquipoResponseDTO | null>(null);
   readonly equipoSeleccionadoEstado = signal<EquipoResponseDTO | null>(null);
@@ -413,32 +392,28 @@ export class EquiposListComponent implements OnInit {
     this.equipoSeleccionadoForm.set(null);
     this.successMessage.set(
       eraEdicion
-        ? `Equipo ${equipo.serial} actualizado correctamente.`
-        : `Equipo ${equipo.serial} recepcionado y Pasaporte Digital generado.`
+        ? `Equipo ${equipo.serial} actualizado.`
+        : `Equipo ${equipo.serial} recepcionado. Pasaporte digital generado.`
     );
     this.cargarEquipos();
   }
 
   onEstadoActualizado(equipo: EquipoResponseDTO): void {
     this.equipoSeleccionadoEstado.set(null);
-    this.successMessage.set(
-      `Transición completada: ${equipo.serial} pasó al estado ${equipo.estadoActual}.`
-    );
+    this.successMessage.set(`${equipo.serial} pasó a ${equipo.estadoActual}.`);
     this.cargarEquipos();
   }
 
   confirmarBajaLogica(equipo: EquipoResponseDTO): void {
     const confirmar = window.confirm(
-      `¿Confirmar baja lógica del equipo "${equipo.serial}" (${equipo.tipo})?\nEl registro y su Pasaporte Digital se conservarán para auditoría con activo = false.`
+      `¿Dar de baja "${equipo.serial}" (${equipo.tipo})?\nEl registro y su pasaporte digital se conservan para auditoría (activo = false).`
     );
     if (!confirmar) return;
 
     this.error.set(null);
     this.equipoService.desactivarEquipo(equipo.id).subscribe({
       next: () => {
-        this.successMessage.set(
-          `Baja lógica aplicada al equipo ${equipo.serial}. Su Pasaporte Digital permanece íntegro para auditoría.`
-        );
+        this.successMessage.set(`Baja lógica aplicada a ${equipo.serial}. Su pasaporte permanece íntegro.`);
         this.cargarEquipos();
       },
       error: (err: ApiErrorResponse) => {
@@ -447,4 +422,3 @@ export class EquiposListComponent implements OnInit {
     });
   }
 }
-

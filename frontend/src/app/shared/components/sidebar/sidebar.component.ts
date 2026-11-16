@@ -9,85 +9,47 @@ import { ROLES_METADATA } from '../../../core/models';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <aside class="eco-sidebar d-flex flex-column justify-content-between" [class.open]="isOpen">
+    <aside class="eco-sidebar" [class.open]="isOpen">
       <div>
-        <!-- Brand Header -->
-        <div class="brand-box d-flex align-items-center justify-content-between px-4 py-3">
-          <a routerLink="/equipos" class="d-flex align-items-center gap-3 text-decoration-none">
-            <div class="brand-logo">
-              <i class="bi bi-recycle"></i>
-            </div>
-            <div>
-              <span class="brand-title font-display d-block">ReusoTech</span>
-              <span class="brand-subtitle d-block">Economía Circular RAEE</span>
-            </div>
+        <div class="brand">
+          <a routerLink="/equipos" class="brand-link">
+            <span class="logo"><i class="bi bi-recycle"></i></span>
+            <span>
+              <span class="brand-title">ReusoTech</span>
+              <span class="brand-sub">Circular</span>
+            </span>
           </a>
-          <button
-            type="button"
-            class="btn btn-sm text-light d-lg-none"
-            (click)="closeSidebar.emit()"
-          >
+          <button type="button" class="close-btn d-lg-none" (click)="closeSidebar.emit()" aria-label="Cerrar">
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
 
-        <!-- Navigation Links -->
-        <div class="px-3 mt-3">
-          <div class="nav-section-title px-3 mb-2">MÓDULOS OPERATIVOS</div>
-          <nav class="nav flex-column gap-1">
-            @if (authService.canViewReportes()) {
-              <a
-                routerLink="/dashboard"
-                routerLinkActive="active"
-                class="nav-link-eco"
-                (click)="closeSidebar.emit()"
-              >
-                <i class="bi bi-pie-chart-fill"></i>
-                <span>Dashboard Circularidad</span>
-              </a>
-            }
+        <nav class="nav-group">
+          <div class="nav-title">Operación</div>
 
-            <a
-              routerLink="/equipos"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              class="nav-link-eco"
-              (click)="closeSidebar.emit()"
-            >
-              <i class="bi bi-pc-display-horizontal"></i>
-              <span>Inventario y Trazabilidad</span>
+          @if (authService.canViewReportes()) {
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" (click)="closeSidebar.emit()">
+              <i class="bi bi-bar-chart-line"></i><span>Circularidad</span>
             </a>
-          </nav>
-        </div>
+          }
+
+          <a routerLink="/equipos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+             class="nav-item" (click)="closeSidebar.emit()">
+            <i class="bi bi-hdd-stack"></i><span>Inventario</span>
+          </a>
+        </nav>
       </div>
 
-      <!-- Role Matrix Card -->
       @if (rolMeta(); as meta) {
-        <div class="p-3 m-3 rounded-4 role-info-box">
-          <div class="d-flex align-items-center gap-2 mb-2">
-            <i class="bi text-emerald fs-5" [ngClass]="meta.icono"></i>
-            <div>
-              <div class="text-white fw-bold small">{{ meta.nombre }}</div>
-              <div class="text-emerald-light" style="font-size: 0.7rem;">RBAC Activo · JWT</div>
-            </div>
-          </div>
-          <p class="mb-2 text-slate-300" style="font-size: 0.75rem; line-height: 1.4;">
-            {{ meta.permisosResumen }}
-          </p>
-          <div class="d-flex flex-wrap gap-1 mt-2">
-            @if (authService.canCreateOrEditEquipo()) {
-              <span class="perm-chip">POST/PUT</span>
-            }
-            @if (authService.canChangeEstado()) {
-              <span class="perm-chip">PATCH Estado</span>
-            }
-            @if (authService.canDeleteEquipo()) {
-              <span class="perm-chip">DELETE Baja</span>
-            }
-            @if (authService.canViewReportes()) {
-              <span class="perm-chip">KPI Reportes</span>
-            }
-            <span class="perm-chip">Pasaporte Digital</span>
+        <div class="role-box">
+          <div class="role-name">{{ meta.nombre }}</div>
+          <p class="role-desc">{{ meta.permisosResumen }}</p>
+          <div class="chips">
+            @if (authService.canCreateOrEditEquipo()) { <span>escritura</span> }
+            @if (authService.canChangeEstado()) { <span>estados</span> }
+            @if (authService.canDeleteEquipo()) { <span>baja</span> }
+            @if (authService.canViewReportes()) { <span>reportes</span> }
+            <span>pasaporte</span>
           </div>
         </div>
       }
@@ -95,122 +57,99 @@ import { ROLES_METADATA } from '../../../core/models';
   `,
   styles: [`
     .eco-sidebar {
-      width: 270px;
+      width: 232px;
       min-height: 100vh;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #f8fafc;
-      border-right: 1px solid rgba(255, 255, 255, 0.07);
+      background: var(--rt-surface);
+      border-right: 1px solid var(--rt-border);
       flex-shrink: 0;
-      transition: transform 0.25s ease;
-    }
-
-    .brand-box {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      min-height: 64px;
-    }
-
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
       display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease;
+    }
+
+    .brand {
+      height: 52px;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--rt-border);
+    }
+
+    .brand-link { display: flex; align-items: center; gap: 0.625rem; text-decoration: none; }
+
+    .logo {
+      width: 26px;
+      height: 26px;
+      border-radius: 5px;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #ffffff;
-      font-size: 1.3rem;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+      font-size: 0.9rem;
+      color: var(--rt-accent);
+      background: var(--rt-accent-soft);
+      border: 1px solid color-mix(in srgb, var(--rt-accent) 35%, transparent);
     }
 
-    .brand-title {
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: #ffffff;
-      letter-spacing: -0.02em;
+    .brand-title { font-size: 0.875rem; font-weight: 600; color: var(--rt-text); margin-right: 0.3rem; }
+    .brand-sub { font-size: 0.875rem; color: var(--rt-muted); }
+
+    .close-btn { background: none; border: none; color: var(--rt-muted); }
+
+    .nav-group { padding: 1rem 0.625rem; display: flex; flex-direction: column; gap: 2px; }
+
+    .nav-title {
+      padding: 0 0.625rem 0.5rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--rt-faint);
     }
 
-    .brand-subtitle {
-      font-size: 0.72rem;
-      color: #34d399;
-      font-weight: 500;
-    }
-
-    .nav-section-title {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #64748b;
-    }
-
-    .nav-link-eco {
+    .nav-item {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.72rem 1rem;
-      border-radius: 12px;
-      color: #cbd5e1;
+      gap: 0.625rem;
+      padding: 0.45rem 0.625rem;
+      border-radius: 5px;
+      color: var(--rt-muted);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.8125rem;
       font-weight: 500;
-      transition: all 0.18s ease;
-
-      i {
-        font-size: 1.1rem;
-        color: #94a3b8;
-        transition: color 0.18s ease;
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.06);
-        color: #ffffff;
-
-        i {
-          color: #34d399;
-        }
-      }
-
-      &.active {
-        background: rgba(16, 185, 129, 0.16);
-        color: #ffffff;
-        font-weight: 600;
-        border: 1px solid rgba(16, 185, 129, 0.32);
-
-        i {
-          color: #10b981;
-        }
-      }
+      border-left: 2px solid transparent;
+      transition: background 0.15s, color 0.15s;
     }
-
-    .role-info-box {
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid rgba(16, 185, 129, 0.22);
+    .nav-item i { font-size: 0.95rem; }
+    .nav-item:hover { background: var(--rt-surface-2); color: var(--rt-text); }
+    .nav-item.active {
+      background: var(--rt-surface-2);
+      color: var(--rt-text);
+      border-left-color: var(--rt-accent);
     }
+    .nav-item.active i { color: var(--rt-accent); }
 
-    .text-emerald { color: #10b981; }
-    .text-emerald-light { color: #6ee7b7; }
-    .text-slate-300 { color: #cbd5e1; }
-
-    .perm-chip {
-      font-size: 0.66rem;
-      font-weight: 600;
-      padding: 0.15rem 0.45rem;
-      border-radius: 6px;
-      background: rgba(16, 185, 129, 0.15);
-      color: #a7f3d0;
+    .role-box { margin: 0.75rem; padding: 0.75rem; border: 1px solid var(--rt-border); border-radius: 6px; background: var(--rt-bg); }
+    .role-name { font-size: 0.75rem; font-weight: 600; color: var(--rt-text); }
+    .role-desc { margin: 0.35rem 0 0.6rem; font-size: 0.7188rem; line-height: 1.45; color: var(--rt-faint); }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .chips span {
+      font-family: var(--rt-mono);
+      font-size: 0.625rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      color: var(--rt-muted);
+      border: 1px solid var(--rt-border);
     }
 
     @media (max-width: 991.98px) {
       .eco-sidebar {
         position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
+        inset: 0 auto 0 0;
         z-index: 1045;
         transform: translateX(-100%);
-
-        &.open {
-          transform: translateX(0);
-        }
+        &.open { transform: translateX(0); }
       }
     }
   `]
@@ -225,4 +164,3 @@ export class SidebarComponent {
     return rol ? ROLES_METADATA[rol] : null;
   });
 }
-

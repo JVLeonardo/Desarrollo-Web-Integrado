@@ -1,232 +1,300 @@
 // ============================================================================
-// ReusoTech Circular - Global SASS Design System (Eco-Tech Modern SaaS UI)
+// ReusoTech Circular — Design System (Industrial / Clean SaaS, dark slate)
 // ============================================================================
 
-// 1. Paleta Corporativa de Economía Circular
-$emerald-primary: #10b981;
-$emerald-dark: #059669;
-$emerald-light: #d1fae5;
-$emerald-soft: rgba(16, 185, 129, 0.12);
+// ---- Tokens --------------------------------------------------------------
+$bg:          #0c1015;
+$surface:     #12171e;
+$surface-2:   #181e27;
+$surface-3:   #1e2530;
+$border:      #242c38;
+$border-strong: #323c4b;
 
-$teal-accent: #0d9488;
-$teal-light: #ccfbf1;
+$text:        #e4e9ef;
+$text-muted:  #8793a3;
+$text-faint:  #5f6b7a;
 
-$slate-900: #0f172a;
-$slate-800: #1e293b;
-$slate-700: #334155;
-$slate-600: #475569;
-$slate-500: #64748b;
-$slate-400: #94a3b8;
-$slate-200: #e2e8f0;
-$slate-100: #f1f5f9;
-$slate-50: #f8fafc;
+$accent:      #3aa57c;   // esmeralda apagado
+$accent-hover:#46b88d;
+$accent-soft: rgba(58, 165, 124, 0.12);
+$amber:       #d2a24a;
+$slate-blue:  #6f8fb3;
+$danger:      #d9645a;
 
-$amber-warn: #f59e0b;
-$rose-danger: #ef4444;
-$indigo-info: #6366f1;
-$sky-info: #0ea5e9;
+$radius:      6px;
+$radius-sm:   4px;
 
-$radius-lg: 16px;
-$radius-md: 12px;
-$radius-sm: 8px;
+$font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+$font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
 
-$shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-$shadow-hover: 0 12px 28px -4px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(16, 185, 129, 0.08);
-$shadow-modal: 0 24px 48px -12px rgba(15, 23, 42, 0.25);
-
-$font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-$font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
-
-// 2. Mixins Reutilizables SASS
-@mixin smooth-transition($props: all, $duration: 0.2s) {
-  transition: $props $duration cubic-bezier(0.4, 0, 0.2, 1);
+// ---- Mixins --------------------------------------------------------------
+@mixin transition($props: color background-color border-color, $t: 0.15s) {
+  transition: $props $t ease;
 }
 
-@mixin eco-card($padding: 1.5rem) {
-  background: #ffffff;
-  border-radius: $radius-lg;
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: $shadow-subtle;
-  padding: $padding;
-  @include smooth-transition(transform, 0.2s);
+@mixin surface($bg-color: $surface) {
+  background: $bg-color;
+  border: 1px solid $border;
+  border-radius: $radius;
 }
 
-@mixin glass-panel($opacity: 0.85) {
-  background: rgba(255, 255, 255, $opacity);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+@mixin label-caps {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $text-muted;
 }
 
-// 3. Variables CSS nativas y Reset Global
+// ---- CSS variables (consumibles desde estilos de componente) ---------------
 :root {
-  --eco-emerald: #{$emerald-primary};
-  --eco-emerald-dark: #{$emerald-dark};
-  --eco-teal: #{$teal-accent};
-  --eco-slate-dark: #{$slate-900};
-  --eco-bg: #{$slate-50};
+  --rt-bg: #{$bg};
+  --rt-surface: #{$surface};
+  --rt-surface-2: #{$surface-2};
+  --rt-surface-3: #{$surface-3};
+  --rt-border: #{$border};
+  --rt-border-strong: #{$border-strong};
+  --rt-text: #{$text};
+  --rt-muted: #{$text-muted};
+  --rt-faint: #{$text-faint};
+  --rt-accent: #{$accent};
+  --rt-accent-soft: #{$accent-soft};
+  --rt-amber: #{$amber};
+  --rt-blue: #{$slate-blue};
+  --rt-danger: #{$danger};
+  --rt-mono: #{$font-mono};
+
+  // Mapeo hacia Bootstrap 5.3
+  --bs-body-bg: #{$bg};
+  --bs-body-color: #{$text};
+  --bs-body-font-family: #{$font-sans};
+  --bs-body-font-size: 0.875rem;
+  --bs-border-color: #{$border};
+  --bs-border-radius: #{$radius};
+  --bs-secondary-color: #{$text-muted};
+  --bs-tertiary-bg: #{$surface-2};
+  --bs-link-color: #{$accent};
+  --bs-link-hover-color: #{$accent-hover};
 }
 
+// ---- Base ------------------------------------------------------------------
 html, body {
   height: 100%;
   margin: 0;
+  background: $bg;
+  color: $text;
   font-family: $font-sans;
-  background-color: $slate-50;
-  color: $slate-800;
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01';
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {
-  font-family: $font-display;
-  letter-spacing: -0.02em;
+  font-family: $font-sans;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: $text;
 }
 
-// 4. Personalización de Clases Bootstrap y Utilidades Eco-Tech
-.eco-card {
-  @include eco-card();
+.font-monospace, .mono { font-family: $font-mono !important; }
+.text-muted, .text-secondary { color: $text-muted !important; }
+.text-dark { color: $text !important; }
+.text-success { color: $accent !important; }
+.text-danger { color: $danger !important; }
+.text-primary { color: $slate-blue !important; }
 
-  &.eco-card-interactive:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-hover;
-  }
+::selection { background: rgba(58, 165, 124, 0.3); }
+
+// Scrollbar discreto
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $border-strong transparent;
+}
+
+// ---- Tarjetas --------------------------------------------------------------
+.eco-card {
+  @include surface($surface);
+  padding: 1.25rem;
+  box-shadow: none;
+  @include transition(border-color background-color);
+
+  &.eco-card-interactive:hover { border-color: $border-strong; }
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid $border;
+
+  h2 { font-size: 1.25rem; margin: 0; }
+  .eyebrow { @include label-caps; display: block; margin-bottom: 0.35rem; }
 }
 
 .glass-navbar {
-  @include glass-panel(0.88);
+  background: rgba(12, 16, 21, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid $border;
 }
 
+// ---- Botones ---------------------------------------------------------------
+.btn { border-radius: $radius; font-weight: 500; font-size: 0.8125rem; }
+
 .btn-eco-primary {
-  background: linear-gradient(135deg, $emerald-primary 0%, $teal-accent 100%);
-  color: #ffffff;
-  border: none;
-  border-radius: $radius-sm;
+  background: $accent;
+  color: #07130e;
+  border: 1px solid $accent;
+  border-radius: $radius;
   font-weight: 600;
-  padding: 0.55rem 1.15rem;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-  @include smooth-transition();
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.9rem;
+  @include transition(background-color border-color);
 
-  &:hover:not(:disabled) {
-    background: linear-gradient(135deg, $emerald-dark 0%, #0f766e 100%);
-    color: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-  }
-
-  &:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
+  &:hover:not(:disabled) { background: $accent-hover; border-color: $accent-hover; color: #07130e; }
+  &:focus-visible { outline: 2px solid rgba(58, 165, 124, 0.5); outline-offset: 2px; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
 .btn-eco-outline {
-  background: #ffffff;
-  color: $slate-700;
-  border: 1px solid $slate-200;
-  border-radius: $radius-sm;
+  background: transparent;
+  color: $text;
+  border: 1px solid $border-strong;
+  border-radius: $radius;
   font-weight: 500;
-  padding: 0.5rem 1rem;
-  @include smooth-transition();
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.9rem;
+  @include transition(background-color border-color);
 
-  &:hover:not(:disabled) {
-    border-color: $emerald-primary;
-    color: $emerald-dark;
-    background-color: rgba(16, 185, 129, 0.04);
-  }
+  &:hover:not(:disabled) { background: $surface-2; border-color: $text-faint; color: $text; }
+  &:disabled { opacity: 0.5; }
 }
 
-.form-control, .form-select {
-  border-radius: 10px;
-  border: 1px solid $slate-200;
-  padding: 0.6rem 0.9rem;
-  font-size: 0.925rem;
-  color: $slate-800;
-  @include smooth-transition();
+.btn-outline-success, .btn-outline-warning, .btn-outline-primary, .btn-outline-danger, .btn-outline-secondary {
+  --bs-btn-border-color: #{$border-strong};
+  --bs-btn-color: #{$text-muted};
+  --bs-btn-hover-bg: #{$surface-3};
+  --bs-btn-hover-border-color: #{$text-faint};
+  --bs-btn-hover-color: #{$text};
+  --bs-btn-active-bg: #{$surface-3};
+  --bs-btn-active-color: #{$text};
+  --bs-btn-disabled-color: #{$text-faint};
+  --bs-btn-disabled-border-color: #{$border};
+}
+.btn-outline-danger:hover { --bs-btn-hover-color: #{$danger}; }
+.btn-outline-success:hover { --bs-btn-hover-color: #{$accent}; }
 
+// ---- Formularios -------------------------------------------------------------
+.form-control, .form-select, .input-group-text {
+  background-color: $bg;
+  border: 1px solid $border-strong;
+  border-radius: $radius;
+  color: $text;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  @include transition(border-color box-shadow);
+
+  &::placeholder { color: $text-faint; }
   &:focus {
-    border-color: $emerald-primary;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
+    background-color: $bg;
+    color: $text;
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba(58, 165, 124, 0.18);
   }
 }
+.input-group-text { background: $surface-2; color: $text-muted; }
+.form-select { background-image: var(--bs-form-select-bg-img); }
+.form-label { @include label-caps; margin-bottom: 0.4rem; }
+.form-text { color: $text-faint; }
 
-.form-label {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: $slate-700;
-  margin-bottom: 0.35rem;
-}
-
+// ---- Tablas ------------------------------------------------------------------
 .table-eco {
+  --bs-table-bg: transparent;
+  --bs-table-color: #{$text};
   margin-bottom: 0;
 
   thead th {
-    background-color: $slate-100;
-    color: $slate-600;
-    font-size: 0.76rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.85rem 1rem;
-    border-bottom: 1px solid $slate-200;
+    background: $surface-2;
+    @include label-caps;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid $border;
+    white-space: nowrap;
   }
 
   tbody td {
-    padding: 0.9rem 1rem;
+    padding: 0.7rem 1rem;
     vertical-align: middle;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-    font-size: 0.9rem;
+    border-bottom: 1px solid $border;
+    font-size: 0.8125rem;
+    background: transparent;
   }
 
-  tbody tr {
-    @include smooth-transition(background-color, 0.15s);
-
-    &:hover {
-      background-color: rgba(16, 185, 129, 0.03);
-    }
-  }
+  tbody tr { @include transition(background-color); &:hover { background: $surface-2; } }
+  tbody tr:last-child td { border-bottom: none; }
 }
 
-// Modal Backdrop & Container
+// ---- Utilidades de Bootstrap re-mapeadas al tema ---------------------------------
+.bg-light, .bg-white, .bg-light-subtle { background-color: $surface-2 !important; }
+.bg-body-tertiary { background-color: $surface-2 !important; }
+.border, .border-top, .border-bottom { border-color: $border !important; }
+.border-light-subtle, .border-secondary-subtle { border-color: $border !important; }
+.bg-dark, .bg-dark-subtle { background-color: $surface-3 !important; color: $text !important; }
+.text-dark-emphasis { color: $text !important; }
+
+.badge {
+  border-radius: $radius-sm;
+  font-weight: 500;
+  font-size: 0.7188rem;
+}
+.bg-success-subtle { background-color: $accent-soft !important; }
+.text-success-emphasis { color: $accent !important; }
+.border-success-subtle { border-color: rgba(58, 165, 124, 0.3) !important; }
+.bg-danger-subtle { background-color: rgba(217, 100, 90, 0.12) !important; }
+.text-danger-emphasis { color: $danger !important; }
+.border-danger-subtle { border-color: rgba(217, 100, 90, 0.3) !important; }
+.progress { background: $surface-3; border-radius: 2px; }
+.progress-bar { border-radius: 2px; }
+.bg-success { background-color: $accent !important; }
+.bg-info { background-color: $slate-blue !important; }
+.bg-emerald { background-color: $accent !important; }
+.btn-close { filter: invert(1) grayscale(100%) brightness(160%); opacity: 0.6; }
+
+// ---- Modales ---------------------------------------------------------------------
 .eco-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.58);
-  backdrop-filter: blur(4px);
+  background: rgba(5, 8, 12, 0.7);
   z-index: 1050;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  animation: fadeIn 0.18s ease-out;
+  animation: fadeIn 0.15s ease-out;
 }
 
 .eco-modal-dialog {
-  background: #ffffff;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-modal;
+  @include surface($surface);
   width: 100%;
   max-width: 600px;
   max-height: 92vh;
   overflow-y: auto;
-  border: 1px solid $slate-200;
-  animation: slideUp 0.2s ease-out;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  animation: slideUp 0.18s ease-out;
 
-  &.eco-modal-lg {
-    max-width: 820px;
-  }
+  &.eco-modal-lg { max-width: 820px; }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media print {
+  .glass-navbar, .eco-sidebar, button, .btn { display: none !important; }
+  body { background: #fff; color: #000; }
 }

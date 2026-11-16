@@ -144,15 +144,16 @@ import { AlertBannerComponent } from '../../../shared/components/alert-banner/al
   `,
   styles: [`
     .modal-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: rgba(16, 185, 129, 0.14);
-      color: #059669;
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: var(--rt-accent-soft);
+      color: var(--rt-accent);
+      border: 1px solid color-mix(in srgb, var(--rt-accent) 30%, transparent);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      font-size: 1.05rem;
     }
   `]
 })

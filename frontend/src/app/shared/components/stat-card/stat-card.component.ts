@@ -6,102 +6,119 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="eco-card eco-card-interactive h-100 d-flex flex-column justify-content-between" [ngClass]="'accent-' + variant">
-      <div>
-        <div class="d-flex align-items-center justify-content-between mb-3">
-          <span class="stat-label text-uppercase fw-bold">{{ title }}</span>
-          <div class="stat-icon" [ngClass]="'icon-' + variant">
-            <i class="bi" [ngClass]="icon"></i>
-          </div>
-        </div>
-        <div class="d-flex align-items-baseline gap-2 mb-1">
-          <h3 class="stat-value font-display mb-0">{{ value }}</h3>
-          @if (suffix) {
-            <span class="stat-suffix fw-semibold">{{ suffix }}</span>
-          }
-        </div>
-        @if (subtitle) {
-          <p class="stat-subtitle text-muted mb-0">{{ subtitle }}</p>
+    <div class="stat h-100" [ngClass]="'tone-' + variant">
+      <div class="stat-head">
+        <span class="stat-label">{{ title }}</span>
+        <i class="bi stat-icon" [ngClass]="icon"></i>
+      </div>
+
+      <div class="stat-body">
+        <span class="stat-value">{{ value }}</span>
+        @if (suffix) {
+          <span class="stat-suffix">{{ suffix }}</span>
         }
       </div>
 
+      @if (subtitle) {
+        <p class="stat-sub">{{ subtitle }}</p>
+      }
+
       @if (progress !== null && progress !== undefined) {
-        <div class="mt-3 pt-2 border-top border-light-subtle">
-          <div class="d-flex justify-content-between small mb-1">
-            <span class="text-secondary fw-medium">{{ progressLabel || 'Nivel de cumplimiento' }}</span>
-            <span class="fw-bold">{{ progress | number:'1.1-2' }}%</span>
+        <div class="stat-foot">
+          <div class="d-flex justify-content-between stat-foot-label">
+            <span>{{ progressLabel || 'Cumplimiento' }}</span>
+            <span class="mono">{{ progress | number: '1.1-2' }}%</span>
           </div>
-          <div class="progress" style="height: 7px; border-radius: 999px;">
-            <div
-              class="progress-bar"
-              role="progressbar"
-              [ngClass]="'bg-bar-' + variant"
-              [style.width.%]="Math.min(100, Math.max(0, progress))"
-            ></div>
+          <div class="stat-track">
+            <div class="stat-fill" [style.width.%]="clamp(progress)"></div>
           </div>
         </div>
       }
     </div>
   `,
   styles: [`
-    .stat-label {
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-      color: #64748b;
-    }
+    :host { display: block; }
 
-    .stat-value {
-      font-size: 1.9rem;
-      font-weight: 800;
-      color: #0f172a;
+    .stat {
+      --tone: var(--rt-accent);
+      background: var(--rt-surface);
+      border: 1px solid var(--rt-border);
+      border-radius: 6px;
+      padding: 1rem 1.125rem 1.125rem;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.15s ease;
     }
+    .stat:hover { border-color: var(--rt-border-strong); }
 
-    .stat-suffix {
-      font-size: 0.9rem;
-      color: #10b981;
-    }
+    .tone-emerald { --tone: var(--rt-accent); }
+    .tone-teal { --tone: #4aa3a0; }
+    .tone-indigo { --tone: var(--rt-blue); }
+    .tone-amber { --tone: var(--rt-amber); }
+    .tone-rose { --tone: var(--rt-danger); }
 
-    .stat-subtitle {
-      font-size: 0.82rem;
-      line-height: 1.4;
-    }
-
-    .stat-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+    .stat-head {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
+      justify-content: space-between;
+      margin-bottom: 0.875rem;
     }
 
-    .icon-emerald {
-      background: rgba(16, 185, 129, 0.14);
-      color: #059669;
-    }
-    .icon-teal {
-      background: rgba(13, 148, 136, 0.14);
-      color: #0d9488;
-    }
-    .icon-indigo {
-      background: rgba(99, 102, 241, 0.14);
-      color: #4f46e5;
-    }
-    .icon-amber {
-      background: rgba(245, 158, 11, 0.15);
-      color: #d97706;
-    }
-    .icon-rose {
-      background: rgba(239, 68, 68, 0.14);
-      color: #e11d48;
+    .stat-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--rt-muted);
     }
 
-    .bg-bar-emerald { background: linear-gradient(90deg, #10b981, #059669); }
-    .bg-bar-teal { background: linear-gradient(90deg, #14b8a6, #0d9488); }
-    .bg-bar-indigo { background: linear-gradient(90deg, #6366f1, #4f46e5); }
-    .bg-bar-amber { background: linear-gradient(90deg, #f59e0b, #d97706); }
-    .bg-bar-rose { background: linear-gradient(90deg, #ef4444, #dc2626); }
+    .stat-icon { font-size: 0.95rem; color: var(--tone); opacity: 0.9; }
+
+    .stat-body { display: flex; align-items: baseline; gap: 0.375rem; }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--rt-text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-suffix { font-size: 0.8125rem; color: var(--rt-muted); }
+
+    .stat-sub {
+      margin: 0.5rem 0 0;
+      font-size: 0.75rem;
+      line-height: 1.45;
+      color: var(--rt-muted);
+    }
+
+    .stat-foot {
+      margin-top: auto;
+      padding-top: 1rem;
+    }
+
+    .stat-foot-label {
+      font-size: 0.6875rem;
+      color: var(--rt-faint);
+      margin-bottom: 0.4rem;
+    }
+    .stat-foot-label .mono { color: var(--rt-muted); }
+
+    .stat-track {
+      height: 3px;
+      background: var(--rt-surface-3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .stat-fill {
+      height: 100%;
+      background: var(--tone);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
   `]
 })
 export class StatCardComponent {
@@ -114,6 +131,7 @@ export class StatCardComponent {
   @Input() progress?: number | null = null;
   @Input() progressLabel?: string;
 
-  protected readonly Math = Math;
+  clamp(v: number): number {
+    return Math.min(100, Math.max(0, v));
+  }
 }
-

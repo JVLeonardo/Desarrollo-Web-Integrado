@@ -12,84 +12,42 @@ import {
   imports: [CommonModule],
   template: `
     @if (meta) {
-      <span class="estado-pill" [ngClass]="meta.colorClase" [title]="meta.descripcion">
-        <i class="bi" [ngClass]="meta.icono"></i>
-        <span>{{ meta.etiqueta }}</span>
-        @if (meta.esEstadoFinal && showFinalTag) {
-          <span class="final-dot" title="Estado de cierre circular"></span>
-        }
+      <span class="pill" [ngClass]="meta.colorClase" [title]="meta.descripcion">
+        <span class="dot"></span>{{ meta.etiqueta }}
       </span>
     }
   `,
   styles: [`
-    .estado-pill {
+    .pill {
+      --c: var(--rt-muted);
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.32rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
+      padding: 0.15rem 0.55rem 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.7188rem;
+      font-weight: 500;
       white-space: nowrap;
-      border: 1px solid transparent;
+      color: var(--c);
+      background: color-mix(in srgb, var(--c) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--c) 28%, transparent);
     }
 
-    .final-dot {
+    .dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background-color: currentColor;
-      opacity: 0.75;
+      background: var(--c);
     }
 
-    .estado-recepcionado {
-      background-color: rgba(14, 165, 233, 0.12);
-      color: #0369a1;
-      border-color: rgba(14, 165, 233, 0.25);
-    }
-
-    .estado-diagnostico {
-      background-color: rgba(99, 102, 241, 0.12);
-      color: #4338ca;
-      border-color: rgba(99, 102, 241, 0.25);
-    }
-
-    .estado-reparacion {
-      background-color: rgba(245, 158, 11, 0.14);
-      color: #b45309;
-      border-color: rgba(245, 158, 11, 0.3);
-    }
-
-    .estado-reparado {
-      background-color: rgba(13, 148, 136, 0.12);
-      color: #0f766e;
-      border-color: rgba(13, 148, 136, 0.28);
-    }
-
-    .estado-reutilizado {
-      background-color: rgba(16, 185, 129, 0.14);
-      color: #047857;
-      border-color: rgba(16, 185, 129, 0.32);
-    }
-
-    .estado-reciclado {
-      background-color: rgba(34, 197, 94, 0.12);
-      color: #15803d;
-      border-color: rgba(34, 197, 94, 0.28);
-    }
-
-    .estado-desmantelado {
-      background-color: rgba(100, 116, 139, 0.14);
-      color: #334155;
-      border-color: rgba(100, 116, 139, 0.28);
-    }
-
-    .estado-disposicion {
-      background-color: rgba(239, 68, 68, 0.12);
-      color: #b91c1c;
-      border-color: rgba(239, 68, 68, 0.26);
-    }
+    .estado-recepcionado { --c: #7d93ad; }
+    .estado-diagnostico  { --c: #8a8fc7; }
+    .estado-reparacion   { --c: #d2a24a; }
+    .estado-reparado     { --c: #4aa3a0; }
+    .estado-reutilizado  { --c: #3aa57c; }
+    .estado-reciclado    { --c: #6fb26a; }
+    .estado-desmantelado { --c: #8793a3; }
+    .estado-disposicion  { --c: #d9645a; }
   `]
 })
 export class EstadoBadgeComponent {
@@ -101,4 +59,3 @@ export class EstadoBadgeComponent {
     return ESTADOS_EQUIPO_META[this.estado] ?? null;
   }
 }
-
