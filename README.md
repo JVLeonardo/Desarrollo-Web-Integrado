@@ -140,16 +140,6 @@ Al iniciar el backend, `DataInitializer` garantiza la existencia de los **5 perf
 
 ---
 
-## ☁️ 9. Despliegue (Vercel + backend en la nube)
-
-Vercel aloja el **frontend Angular**. El backend Spring Boot (Java) no corre en Vercel: debe desplegarse en un host de contenedores (Render, Railway, Fly.io) usando [`api/Dockerfile`](api/Dockerfile).
-
-1. **Backend**: crear un servicio Docker apuntando a `api/` y obtener su URL HTTPS pública (ej. `https://reusotech-api.onrender.com`). CORS ya admite cualquier origen.
-2. **Frontend**: editar `frontend/src/environments/environment.prod.ts` con `apiUrl: 'https://<tu-backend>/api'` y hacer push.
-3. **Vercel**: *Add New Project* → importar el repositorio → **Root Directory = `frontend`**. `frontend/vercel.json` ya define build (`npm run build`), salida (`dist/frontend/browser`) y el rewrite SPA.
-
----
-
 ## 🧪 8. Ejecución de Pruebas Automatizadas (Backend TDD)
 
 Para ejecutar la suite completa de pruebas unitarias y de integración en memoria (H2):
